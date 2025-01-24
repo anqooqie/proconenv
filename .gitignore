@@ -1,0 +1,11 @@
+/lib/
+/aoj/*
+!/aoj/dl.sh
+/atcoder/*
+!/atcoder/.gitkeep
+/project-euler/*
+!/project-euler/dl.sh
+/yosupo/*
+!/yosupo/dl.sh
+/yukicoder/*
+!/yukicoder/dl.sh
