@@ -13,7 +13,6 @@
                 "ms-vscode.cpptools-extension-pack",
                 "ms-vscode.makefile-tools",
                 "ms-azuretools.vscode-docker",
-                "ms-vscode.cmake-tools",
                 "GitHub.vscode-github-actions"
             ]
         }
@@ -26,7 +25,8 @@
         "YUKICODER_TOKEN": "${localEnv:YUKICODER_TOKEN}"
     },
     "containerEnv": {
-        "TZ": "Asia/Tokyo"
+        "TZ": "Asia/Tokyo",
+        "CPLUS_INCLUDE_PATH": "/workspaces/proconenv/lib"
     },
     "postCreateCommand": "(test -d /workspaces/proconenv/lib || (git clone https://github.com/anqooqie/proconlib.git /workspaces/proconenv/lib && git -C /workspaces/proconenv/lib submodule update --init --recursive && git -C /workspaces/proconenv/lib remote set-url origin git@github.com:anqooqie/proconlib.git)) && ln -s /workspaces/proconenv/lib/template ~/.config/atcoder-cli-nodejs/cpp"
 }
