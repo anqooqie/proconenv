@@ -10,10 +10,18 @@ ENV LANG=ja_JP.UTF-8
 ENV LANGUAGE=ja_JP:ja
 ENV LC_ALL=ja_JP.UTF-8
 
+RUN apt-get update && apt-get install -y software-properties-common \
+    && add-apt-repository ppa:ubuntu-toolchain-r/test \
+    && apt-get update \
+    && apt-get install -y \
+       build-essential \
+       gcc-12 g++-12 \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 60 \
+                           --slave   /usr/bin/g++ g++ /usr/bin/g++-12
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tzdata \
     ca-certificates \
-    build-essential \
     gdb \
     cmake \
     git \
@@ -21,6 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     time \
     less \
+    vim \
     openssh-client \
     python3 \
     python3-pip \
