@@ -135,7 +135,7 @@ RUN cd /tmp \
     git+https://github.com/not522/ac-library-python \
     && python3.11 -m pip install -U setuptools==66.0.0 \
     && python3.11 -m pip install cppyy==2.4.1 \
-    && rm -rf Python-3.11.4 \
+    && rm -rf Python-3.11.4.tar.gz Python-3.11.4 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
