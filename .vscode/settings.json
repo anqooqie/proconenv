@@ -1,5 +1,4 @@
 {
-    "editor.tabSize": 2,
     "files.associations": {
         "iostream": "cpp",
         "vector": "cpp",
@@ -90,5 +89,16 @@
         "expected": "cpp",
         "spanstream": "cpp",
         "stacktrace": "cpp"
+    },
+    "[cpp]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "[makefile]": {
+        "editor.insertSpaces": false
+    },
+    "[python]": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true
     }
 }

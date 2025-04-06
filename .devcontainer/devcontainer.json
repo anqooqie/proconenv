@@ -10,10 +10,11 @@
                 "terminal.integrated.defaultProfile.linux": "bash"
             },
             "extensions": [
-                "ms-vscode.cpptools-extension-pack",
-                "ms-vscode.makefile-tools",
+                "GitHub.vscode-github-actions",
                 "ms-azuretools.vscode-docker",
-                "GitHub.vscode-github-actions"
+                "ms-python.python",
+                "ms-vscode.cpptools-extension-pack",
+                "ms-vscode.makefile-tools"
             ]
         }
     },
@@ -25,8 +26,10 @@
         "YUKICODER_TOKEN": "${localEnv:YUKICODER_TOKEN}"
     },
     "containerEnv": {
+        "LANG": "ja_JP.UTF-8",
+        "LANGUAGE": "ja_JP:ja",
         "TZ": "Asia/Tokyo",
         "CPLUS_INCLUDE_PATH": "/workspaces/proconenv/lib"
     },
-    "postCreateCommand": "(test -d /workspaces/proconenv/lib || (git clone https://github.com/anqooqie/proconlib.git /workspaces/proconenv/lib && git -C /workspaces/proconenv/lib submodule update --init --recursive && git -C /workspaces/proconenv/lib remote set-url origin git@github.com:anqooqie/proconlib.git)) && ln -s /workspaces/proconenv/lib/template ~/.config/atcoder-cli-nodejs/cpp"
+    "postCreateCommand": "bash .devcontainer/postCreateCommand.sh"
 }
