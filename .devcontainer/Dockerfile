@@ -1,10 +1,8 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Information about the user
-ARG USERNAME=anqooqie
+ARG USER_NAME=anqooqie
 ARG USER_EMAIL=zzzfuku1991@gmail.com
-ARG USER_UID=1000
-ARG USER_GID=1000
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -21,18 +19,20 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     tzdata \
     \
-    # Make GCC 12 the default compiler
-    && apt-get install -y --no-install-recommends \
-    gnupg-agent \
-    software-properties-common \
-    && add-apt-repository ppa:ubuntu-toolchain-r/test \
-    && apt-get update \
+    # Make GCC 14 the default compiler
     && apt-get install -y --no-install-recommends \
     build-essential \
-    gcc-12 \
-    g++-12 \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 60 \
-                           --slave   /usr/bin/g++ g++ /usr/bin/g++-12 \
+    gcc-14 \
+    g++-14 \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 140 \
+                           --slave   /usr/bin/g++ g++ /usr/bin/g++-14 \
+    \
+    # Make clang 20 the default compiler
+    && apt-get install -y --no-install-recommends \
+    clang-20 \
+    clang++-20 \
+    && update-alternatives --install /usr/bin/clang   clang   /usr/bin/clang-20   200 \
+                           --slave   /usr/bin/clang++ clang++ /usr/bin/clang++-20 \
     \
     # Install utility commands
     && apt-get install -y --no-install-recommends \
@@ -43,19 +43,9 @@ RUN apt-get update \
     git \
     less \
     openssh-client \
-    sudo \
+    pipx \
     time \
     vim \
-    \
-    # Install online-judge-tools, competitive-verifier and aclogin
-    && apt-get install -y --no-install-recommends \
-    python3 \
-    python3-pip \
-    && pip3 install \
-    aclogin \
-    competitive-verifier \
-    online-judge-tools \
-    online-judge-verify-helper \
     \
     # Install atcoder-cli
     && apt-get install -y --no-install-recommends \
@@ -74,15 +64,9 @@ RUN apt-get update \
     \
     # Clean up
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    \
-    # Create a new user with sudo privileges
-    && groupadd --gid $USER_GID $USERNAME \
-    && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Python 3.11, the version available on the AtCoder online judge.
+# Install Python 3.13, the version available on the AtCoder online judge.
 RUN cd /tmp \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -105,49 +89,83 @@ RUN cd /tmp \
     uuid-dev \
     zlib1g-dev \
     git \
-    && curl -o Python-3.11.4.tar.xz https://www.python.org/ftp/python/3.11.4/Python-3.11.4.tar.xz \
-    && tar xf Python-3.11.4.tar.xz \
-    && cd Python-3.11.4 \
-    && ./configure --enable-optimizations \
-    && make \
+    llvm-bolt \
+    && curl -o Python-3.13.7.tar.xz https://www.python.org/ftp/python/3.13.7/Python-3.13.7.tar.xz \
+    && tar xf Python-3.13.7.tar.xz \
+    && cd Python-3.13.7 \
+    && ln -s /usr/lib/llvm-18/lib/libbolt_rt_instr.a /usr/lib/libbolt_rt_instr.a \
+    && ./configure --enable-optimizations --with-lto=full --with-strict-overflow --enable-bolt \
+    && make -j$(nproc) \
     && make altinstall \
     && cd .. \
-    && python3.11 -m pip install \
-    numpy==1.24.1 \
-    scipy==1.10.1 \
-    networkx==3.0 \
-    sympy==1.11.1 \
-    sortedcontainers==2.4.0  \
-    more-itertools==9.0.0 \
-    shapely==2.0.0 \
-    bitarray==2.6.2 \
-    PuLP==2.7.0 \
-    mpmath==1.2.1 \
-    pandas==1.5.2 \
-    z3-solver==4.12.1.0 \
-    scikit-learn==1.2.0 \
-    ortools==9.5.2237 \
-    torch==1.13.1 \
-    polars==0.15.15 \
-    lightgbm==3.3.1 \
-    gmpy2==2.1.5 \
-    numba==0.57.0 \
-    git+https://github.com/not522/ac-library-python \
-    && python3.11 -m pip install -U setuptools==66.0.0 \
-    && python3.11 -m pip install cppyy==2.4.1 \
-    && rm -rf Python-3.11.4.tar.gz Python-3.11.4 \
+    && rm -rf Python-3.13.7.tar.xz Python-3.13.7 \
+    && python3.13 -m pip install setuptools pip -U \
+    && python3.13 -m pip install --no-warn-script-location \
+    absl-py==2.3.1 \
+    git+https://github.com/not522/ac-library-python@27fdbb71cd0d566bdeb12746db59c9d908c6b5d5 \
+    acl-cpp-python==0.6.2 \
+    bitarray==3.6.1 \
+    cppyy==3.5.0 \
+    cppyy-backend==1.15.3 \
+    cppyy-cling==6.32.8 \
+    CPyCppyy==1.13.0 \
+    Cython==3.1.3 \
+    filelock==3.19.1 \
+    fsspec==2025.7.0 \
+    gmpy2==2.2.1 \
+    immutabledict==4.2.1 \
+    Jinja2==3.1.6 \
+    joblib==1.5.1 \
+    lightgbm==4.6.0 \
+    llvmlite==0.44.0 \
+    MarkupSafe==3.0.2 \
+    more-itertools==10.7.0 \
+    mpmath==1.3.0 \
+    networkx==3.5 \
+    numpy==2.2.6 \
+    ortools==9.14.6206 \
+    pandas==2.3.2 \
+    polars==1.31.0 \
+    protobuf==6.31.1 \
+    PuLP==3.2.2 \
+    pyrsistent==0.20.0 \
+    python-dateutil==2.9.0.post0 \
+    pytz==2025.2 \
+    rustworkx==0.16.0 \
+    scikit-learn==1.7.1 \
+    scipy==1.16.1 \
+    shapely==2.1.1 \
+    six==1.17.0 \
+    sortedcontainers==2.4.0 \
+    sympy==1.14.0 \
+    threadpoolctl==3.6.0 \
+    typing_extensions==4.14.1 \
+    tzdata==2025.2 \
+    z3-solver==4.15.3.0 \
+    && python3.13 -m pip cache purge \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Switch to the new user and set up the home directory
-USER $USERNAME
-WORKDIR /home/$USERNAME
+# Switch to non-root user
+USER ubuntu
+WORKDIR /home/ubuntu
 
-# Configure settings to be stored in the home directory
-RUN acc config oj-path "$(realpath "$(which oj)")" \
+# Install dependencies and set up the environment for the non-root user
+RUN \
+    # Install online-judge-tools and other relevant tools using pipx
+    pipx install \
+    aclogin \
+    competitive-verifier \
+    online-judge-tools \
+    online-judge-verify-helper \
+    \
+    # Configure atcoder-cli
+    && acc config oj-path "$(realpath "$(which oj)")" \
     && acc config default-test-dirname-format test \
     && acc config default-template cpp \
+    \
+    # Configure git
     && git config --global core.editor vim \
     && git config --global init.defaultBranch main \
-    && git config --global user.name $USERNAME \
+    && git config --global user.name $USER_NAME \
     && git config --global user.email $USER_EMAIL
