@@ -156,7 +156,7 @@ RUN \
     pipx install \
     aclogin \
     competitive-verifier \
-    online-judge-tools \
+    git+https://github.com/online-judge-tools/oj.git@v12.0.0 \
     online-judge-verify-helper \
     \
     # Configure atcoder-cli
