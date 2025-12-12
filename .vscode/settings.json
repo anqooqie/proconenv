@@ -93,7 +93,8 @@
         "stdfloat": "cpp",
         "generator": "cpp",
         "print": "cpp",
-        "text_encoding": "cpp"
+        "text_encoding": "cpp",
+        "cassert": "cpp"
     },
     "[cpp]": {
         "editor.tabSize": 2,

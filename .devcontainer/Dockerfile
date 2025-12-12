@@ -150,6 +150,9 @@ RUN cd /tmp \
 USER ubuntu
 WORKDIR /home/ubuntu
 
+# Copy the patch file for oj-bundle
+COPY .devcontainer/cplusplus_bundle.py.patch ./cplusplus_bundle.py.patch
+
 # Install dependencies and set up the environment for the non-root user
 RUN \
     # Install online-judge-tools and other relevant tools using pipx
@@ -158,6 +161,10 @@ RUN \
     competitive-verifier \
     git+https://github.com/online-judge-tools/oj.git@v12.0.0 \
     online-judge-verify-helper \
+    \
+    # Apply the patch to oj-bundle to fix C++ bundle issues
+    && patch -p0 ~/.local/share/pipx/venvs/online-judge-verify-helper/lib/python3.12/site-packages/onlinejudge_verify/languages/cplusplus_bundle.py < ./cplusplus_bundle.py.patch \
+    && rm ./cplusplus_bundle.py.patch \
     \
     # Configure atcoder-cli
     && acc config oj-path "$(realpath "$(which oj)")" \
