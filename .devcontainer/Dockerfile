@@ -171,6 +171,9 @@ RUN \
     && acc config default-test-dirname-format test \
     && acc config default-template cpp \
     \
+    # Install Claude Code
+    && curl -fsSL https://claude.ai/install.sh | bash \
+    \
     # Configure git
     && git config --global core.editor vim \
     && git config --global init.defaultBranch main \
