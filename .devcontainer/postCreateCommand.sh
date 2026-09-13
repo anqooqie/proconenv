@@ -10,5 +10,8 @@ if [ ! -d /workspaces/proconenv/lib_py ]; then
   git -C /workspaces/proconenv/lib_py submodule update --init --recursive
   git -C /workspaces/proconenv/lib_py remote set-url origin git@github.com:anqooqie/proconlib_py.git
 fi
+git -C /workspaces/proconenv config core.hooksPath .githooks
+git -C /workspaces/proconenv/lib config core.hooksPath .githooks
+git -C /workspaces/proconenv/lib_py config core.hooksPath .githooks
 ln -s /workspaces/proconenv/lib/template ~/.config/atcoder-cli-nodejs/cpp
 ln -s /workspaces/proconenv/lib_py/template ~/.config/atcoder-cli-nodejs/py
