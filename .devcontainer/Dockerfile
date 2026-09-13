@@ -154,6 +154,9 @@ RUN cd /tmp \
 USER ubuntu
 WORKDIR /home/ubuntu
 
+# Make commands installed by pipx available during the build
+ENV PATH="/home/ubuntu/.local/bin:${PATH}"
+
 # Copy the patch file for oj-bundle
 COPY .devcontainer/cplusplus_bundle.py.patch ./cplusplus_bundle.py.patch
 
